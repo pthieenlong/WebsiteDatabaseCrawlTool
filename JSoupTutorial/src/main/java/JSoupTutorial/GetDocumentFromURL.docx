@@ -1,0 +1,75 @@
+package JSoupTutorial;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.*;
+import org.jsoup.select.Elements;
+
+public class GetDocumentFromURL {
+    public static void main(String[] args) throws IOException {
+//        for(int i = 0; i < linksList.size(); i++){
+//            getItemName(linksList.get(i));
+//            getImageLinks(linksList.get(i));
+//            getPrice(linksList.get(i));
+//            getInform(linksList.get(i));
+//        }
+
+        getAllItems("https://gearvn.com/collections/ram-pc");
+    }
+    public static ArrayList<String> linksList = new ArrayList<>();
+    static {
+//
+
+    }
+    //lay link tung san pham va crawl du lieu
+    public static void getAllItems(String url) throws IOException{
+        Document doc = Jsoup.connect(url).get();
+        Elements links = doc.select(".product-row a[href]");
+        for(Element link : links){
+            String itemUrl = "https://gearvn.com" + link.attr("href");
+            System.out.println("item link : " + itemUrl);
+            getItemName(itemUrl);
+            getItemImage(itemUrl);
+            getItemPrice(itemUrl);
+            getItemInform(itemUrl);
+            System.out.println("================================================");
+        }
+    }
+    //Get Name
+    public static void getItemName(String url) throws  IOException{
+        Document doc = Jsoup.connect(url).get();
+        Elements names = doc.select("div.col-sm-6.col-xs-12.product_parameters > h1");
+        for (Element name: names) {
+            System.out.println("\nname : " + name.text());
+        }
+    }
+    //Get Image
+    public static void getItemImage(String url) throws IOException{
+        Document doc = Jsoup.connect(url).get();
+        Elements imgs = doc.select("img[src$=.jpg]");
+        for (Element img: imgs) {
+            System.out.println("\nimage : " + img.attr("src"));
+        }
+    }
+    //Get Price
+    public static void getItemPrice(String url) throws IOException{
+        Document doc = Jsoup.connect(url).get();
+        Elements prices = doc.select(".product_price > del");
+        for(Element price : prices){
+            System.out.println("\nprice : " + price.text());
+        }
+    }
+    //Get Information
+    public static void getItemInform(String url) throws IOException{
+        Document doc = Jsoup.connect(url).get();
+        Elements informTopic = doc.select(".specTopic");
+        Elements informDetails = doc.select(".specDetail");
+        int length = informTopic.size();
+        System.out.println("inform: ");
+        for(int i = 1; i < length; i++){
+            System.out.println(informTopic.get(i).text() + " - " + informDetails.get(i).text());
+        }
+    }
+}
